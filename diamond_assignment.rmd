@@ -1,0 +1,115 @@
+---
+
+---
+The following uses the diamonds dataset from the GGPLOT2 library 
+```{r}
+library(ggplot2)
+mydiamonds <- diamonds
+```
+
+You can paste in a new "code chunk" by pressing CTRL- ALT - I
+so for each question listed below, put in a new code chunk to answer that question.
+Knit your notebook to Word and submit the word document on blackboard.
+
+dataset exploration
+```{r}
+#head(mydiamonds, 10)
+#??mt.mydiamonds
+```
+
+
+
+
+How many records are in the dataset?
+```{r}
+num_rows <- nrow(mydiamonds)
+paste("This dataframe has ", as.character(num_rows), " rows.")
+```
+
+
+What is the largest diamond by weight (carat)?
+```{r}
+largest_weight = max(mydiamonds$carat)
+
+result <- paste("The largest diamond weighed ", as.character(largest_weight))
+result
+x = which(mydiamonds$carat == largest_weight)
+#mydiamonds[x,]
+```
+
+
+Most and least expensive?
+
+```{r}
+costliest = max(mydiamonds$price)
+cheapest = min(mydiamonds$price)
+paste("Costliest diamond is ", as.character(costliest))
+paste("Cheapest diamond is ",as.character(cheapest))
+x = which(mydiamonds$price == costliest)
+y = which(mydiamonds$price == cheapest)
+#mydiamonds[x,]
+#mydiamonds[y,]
+```
+
+
+Plot a bar chart of count of diamonds vs cut.
+```{r}
+library(dplyr)
+
+pivot_table <- mydiamonds %>% group_by(cut) %>% summarise(
+  total_count = n()
+)
+#pivot_table
+Cuts <- pivot_table$cut
+Frequency <- pivot_table$total_count
+#barplot(y_ax,names.arg=x_ax,xlab="Cut",ylab="Frequency",fill="greens", col="green",
+#main="Diamond Cuts")
+ggplot(pivot_table, aes(x= Cuts, y = Frequency, fill=Frequency)) + geom_bar(stat = "identity") +  geom_text(aes(label = Frequency), vjust=0) + ggtitle("Diamond Cuts")  + scale_fill_gradient(low="#ADD8E6",high="#00008B")
+
+```
+
+
+Let's explore the data a bit. What attributes does the most expensive diamond have? Change max(price) to min(price) to see the least expensive.
+```{r}
+#subset(mydiamonds, price == min(price))
+subset(mydiamonds, price == max(price))
+```
+
+Create a plot of carat vs price.
+```{r}
+x_ax2 <-mydiamonds$carat
+y_ax2 <- mydiamonds$price
+#ggplot(mydiamonds, aes(x= carat, y = price)) + geom_point() + geom_smooth()
+plot(x_ax2, y_ax2, main = "carat-price relationship", xlab = "Carat", ylab = "Price",pch = ".", col = "#ffb3b3" , abline(lm(y_ax2 ~ x_ax2), col = "black"))
+```
+
+
+
+Does it look like carat and price have a linear relationship?
+Yes, as seen from the chart above, there is a moderate positive linear relationship between price and carat. This means that as carat increases by a certain amount price also increases by 1.
+
+Create three other plots of other variables vs price. The point of exploratory analysis (know your data) is to do just that, explore. You might have to plot more than three to find variables that plot correctly. Please realize too that scatter plots (or line) are for continuous variables and not for categorical variables. See the ggplot2 intro for references. Please try to pick three variables that you think have a strong influence in the price of the diamond. The main point for this is to make a model later on.
+
+
+Depth and Price relationship: There is no relationship between depth and price of a diamond
+```{r}
+x_ax3 <-mydiamonds$depth
+
+plot(x_ax3, y_ax2, main = "depth-price relationship", xlab = "Depth", ylab = "Price",pch = ".", col = "#ffb3b3" )
+```
+
+Table and Price relationship: from the graph below we can see that table and price have
+no relationship
+```{r}
+x_ax4 <-mydiamonds$table
+
+plot(x_ax4, y_ax2, main = "table-price relationship", xlab = "Table", ylab = "Price",pch = ".", col = "#ffb3b3")
+```
+
+Diamond lenght(x) and price relationship: There a weak positive linear relationship between diamond lenght and price
+```{r}
+x_ax5 <-mydiamonds$x
+
+plot(y_ax2, x_ax5,  main = "Diamond length-price relationship", xlab = "Price", ylab = "Diamond Lenght",pch = ".", col = "#ffb3b3" , abline(lm(x_ax5 ~ y_ax2), col = "black"))
+#ggplot(mydiamonds, aes(x= carat, y = x)) + geom_point() + geom_smooth()
+```
